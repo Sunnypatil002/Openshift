@@ -16,6 +16,12 @@ Openshift Virtualization:
 
 https://cloud.redhat.com/learning/learn:getting-started-red-hat-openshift-virtualization/resource/resources:prerequisites-red-hat-openshift-virtualization
 
+#####################################
+Openshift Advanced CLuster Mangement:
+#####################################
+
+https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.5/html/multicluster_engine/uninstalling#deleting-the-components-by-using-the-console
+
 ##################################
 
 ##################################
