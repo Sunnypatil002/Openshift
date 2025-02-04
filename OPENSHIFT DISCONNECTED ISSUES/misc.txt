@@ -1,0 +1,44 @@
+#####################################################
+ServiceMesh Compitable version for OCP 4.14 -- 2.6.4 
+#####################################################
+
+https://docs.openshift.com/container-platform/4.14/service_mesh/v2x/servicemesh-release-notes.html
+
+
+Component: Version
+
+Istio: 1.20.8
+
+Envoy Proxy: 1.28.7
+
+Kiali Server: 1.73.17 
+
+================================================================================================================================================================
+Service Mesh Installation Process
+
+Prerequisites
+Follow the Preparing to install Red Hat OpenShift Service Mesh process.
+
+An account with the cluster-admin role.
+
+
+1. Installing the OpenShift Elasticsearch Operator
+
+2. Installing the Red Hat OpenShift distributed tracing platform Operator
+
+3. Installing the Kiali Operator
+
+4. Additional Operators include:
+	a. Kiali Operator provided by Red Hat
+	b. Tempo Operator
+
+5. Deploying the Service Mesh control plane from the web console
+				OR
+   Deploying the Service Mesh control plane using the CLI
+
+6. Validating your SMCP installation
+
+7. Configuring all control plane components to run on infrastructure nodes using the web console OR CLI
+
+
+==================================================================================================================================================================

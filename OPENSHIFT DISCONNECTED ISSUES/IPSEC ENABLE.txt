@@ -1,0 +1,18 @@
+#####################################################################################
+To find the names of the OVN-Kubernetes data plane pods, enter the following command:
+#####################################################################################
+
+$ oc get pods -n openshift-ovn-kubernetes -l=app=ovnkube-node
+
+#####################################
+Check if IPsec is enabled in cluster:
+#####################################
+
+$ oc -n openshift-ovn-kubernetes rsh ovnkube-node-<XXXXX> ovn-nbctl --no-leader-only get nb_global . ipsec
+
+###########################
+Disabling IPsec encryption:
+###########################
+
+$ oc patch networks.operator.openshift.io/cluster --type=json -p='[{"op":"remove", "path":"/spec/defaultNetwork/ovnKubernetesConfig/ipsecConfig"}]'
+

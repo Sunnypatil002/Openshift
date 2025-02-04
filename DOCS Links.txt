@@ -1,0 +1,21 @@
+########################################
+Standalone Mirror registry Installation:
+########################################
+
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.13/html/disconnected_installation_mirroring/installing-mirroring-creating-registry#mirror-registry-remote_installing-mirroring-creating-registry
+
+###################################
+Standalone Mirror Registry Upgrade:
+###################################
+
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.13/html/disconnected_installation_mirroring/installing-mirroring-creating-registry#mirror-registry-remote-host-update_installing-mirroring-creating-registry
+
+##################################
+Openshift Virtualization:
+##################################
+
+https://cloud.redhat.com/learning/learn:getting-started-red-hat-openshift-virtualization/resource/resources:prerequisites-red-hat-openshift-virtualization
+
+##################################
+
+##################################

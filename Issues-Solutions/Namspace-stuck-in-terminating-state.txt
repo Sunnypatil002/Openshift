@@ -1,0 +1,25 @@
+Steps to delete namespace stuck in terminating state in openshift
+
+# Check the namespace stuck in terminating state
+$ oc get ns | grep -i terminating 
+Take a backup of namespace stuck in terminating state
+
+$ oc get ns open-cluster-management -o yaml > open-cluster-management.yaml
+Edit the backup file and remove the line "-Kubernetes"  in finalizers inside spec.
+$ vi open-cluster-management.yaml
+----------------------------------------------------
+spec:
+  finalizers:
+  - Kubernetes         #delete this line 
+----------------------------------------------------
+start a temporary local proxy server to let the local server talk to the remote OpenShift cluster
+$ oc proxy &
+The command below gives a successful response, indicating that you updated the namespace by sending the update request with the file
+$ curl -k -H "Content-Type: application/yaml" -X PUT --data-binary @open-cluster-management.yaml http://127.0.0.1:8001/api/v1/namespaces/open-cluster-management/finalize
+Kill the proxy server 
+$ kill -9 %%
+CHeck the namespace w=should have been deleted from cluster.
+$ oc get ns | grep -i terminating
+
+
+Reference: https://www.redhat.com/en/blog/openshift-terminating-state
