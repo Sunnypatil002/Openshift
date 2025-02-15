@@ -1,0 +1,15 @@
+@@@in VMware vm is using the rdm how can we migrate this vm with rdm inside openshift cluster 
+- 
+@@@distributed switch is configured at vm ware level how such kind of network can be managed in openshift
+- such kind of network can be managed by OVN-Kubernetes.It provides distributed switching and routing capabilities similar to VMware’s vDS
+
+
+1. Please use content.redhat.com for all the reference materials that you are looking forward to.
+
+2. The Virtualization contents can be found here: https://content.redhat.com/us/en/product/products-and-cloud-services/openshift-virtualization.html
+3. Reference Implementation - https://access.redhat.com/articles/7067871
+4. Document to be shared with clients - https://www.redhat.com/en/resources/15-reasons-adopt-openshift-virtualization-ebook
+5. Disaster recovery guide - https://access.redhat.com/
+6. High Availability guide - https://access.redhat.com/articles/7057929
+7. Explaining virtualization in terms of OpenShift - https://content.redhat.com/us/en/assets/display.html?id=637e7016-b3de-4660-b866-65a0f98b3af7
+8. database migration happens from on-prem to openshift - https://www.redhat.com/en/resources/openshift-skill-paths-datasheet

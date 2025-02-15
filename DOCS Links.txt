@@ -16,6 +16,9 @@ Openshift Virtualization:
 
 https://cloud.redhat.com/learning/learn:getting-started-red-hat-openshift-virtualization/resource/resources:prerequisites-red-hat-openshift-virtualization
 
+https://www.redhat.com/en/products/interactive-walkthrough/
+
+
 #####################################
 Openshift Advanced CLuster Mangement:
 #####################################

@@ -1,0 +1,23 @@
+######################################################################################
+Migration Toolkit for Containers fails with "Unable to determine if virtual resource"
+######################################################################################
+
+SOLUTION: 
+
+This error can be shown when an APIService on the OpenShift Container Platform cluster is not available. To resolve the issue, remove the APIService that is not available.
+
+$ oc get apiservice | egrep "NAME|False"
+-----------------------------------------------------------------------------------------------------------------------
+[root@nandita ~]# oc get apiservice | egrep "NAME|False"
+NAME                                                  SERVICE                                                      AVAILABLE                 AGE
+v1.clusterview.open-cluster-management.io             multicluster-engine/ocm-proxyserver                          False (ServiceNotFound)   35d
+v1alpha1.clusterview.open-cluster-management.io       multicluster-engine/ocm-proxyserver                          False (ServiceNotFound)   35d
+v1beta1.proxy.open-cluster-management.io              multicluster-engine/ocm-proxyserver                          False (ServiceNotFound)   35d
+
+------------------------------------------------------------------------------------------------------------------------
+
+Delete these apiservices 
+
+
+
+
