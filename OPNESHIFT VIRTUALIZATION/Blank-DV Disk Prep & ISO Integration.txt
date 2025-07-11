@@ -1,0 +1,80 @@
+HOW TO CREATE BLANK DATAVOLUME & INJECT ISO INSIDE IT
+###########################################################
+
+PRE_REQUISITES:
+
+1. Openshift cluster READIED
+2. Openshift virtualization setup completed
+3. DYNAMIC STORAGE CLASS AVAILABILITY
+
+############################################################
+
+1. Create a blank dv in Namespace used for virtual-machines.
+
+oc project virtual-machines
+
+
+vi blank-iso-dv.yaml
+
+_____________________________________________________________
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: blank-image-datavolume-win
+spec:
+  source:
+    upload: {}
+  storage:
+    resources:
+      requests:
+        storage: 8Gi                  #Change according to size of iso
+  storageClassName: hpp-blank         #Change to your storage class name
+______________________________________________________________
+
+
+Install virtctl 
+
+1. Check kubevirt version 
+--------------------------------------------------------------------------------------
+$ oc get kubevirt -n kubevirt -o jsonpath="{.items[0].status.observedVersion}"
+--------------------------------------------------------------------------------------
+
+2. Install virtctl for kubevirt version <>
+--------------------------------------------------------------------------------------
+wget https://github.com/kubevirt/kubevirt/releases/download/v1.5.1/virtctl-v1.5.1-linux-amd64
+chmod +x virtctl-v1.5.1-linux-amd64
+sudo mv virtctl-v1.5.1-linux-amd64 /usr/local/bin/virtctl
+--------------------------------------------------------------------------------------
+
+3. Verify Installation
+--------------------------------------------------------------------------------------
+$ virtctl version
+--------------------------------------------------------------------------------------
+
+
+4. Check USAGE of virtctl
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/openshift_virtualization/virt-using-the-cli-tools
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OCP Virtualization
+
+
+1. Core-pair (2 cores or 4vCPUs)
+
+This subscription option is available for OpenShift Kubernetes Engine, OpenShift Container Platform, and OpenShift Platform Plus. Core-pair subscriptions are not applicable to OpenShift Virtualization Engine.
+
+
+
+
