@@ -1,0 +1,112 @@
+HPP storage setup for Openshift Migration tool kit for Virtualization.
+
+## Fixing Permission Issues for Forklift VM Migration with HPP on OpenShift
+
+## 🔍 Problem Statement
+When using HostPath Provisioner (HPP) for storage in OpenShift Virtualization, PVCs created during VM migration (via Forklift/MTV) often have incorrect ownership (`root:root`) and restrictive permissions (`0755`). This causes importer pods to fail with a "Permission denied" error when attempting to write `/data/disk.img`.
+
+## 🧱 Root Cause
+- HPP mounts PVCs from the host path (e.g., `/var/hpvolumes/csi/`), defaulting to `root:root` ownership.
+- CDI importer pods run as UID `107` (`qemu`) and cannot write to the PVC directory unless they have sufficient permissions.
+- CDIConfig does not support setting `fsGroup` globally.
+- RWX (ReadWriteMany) access mode does not work properly in multi-node clusters with HPP, as the underlying path is node-local.
+
+## ✅ Objective
+Ensure all PVC volumes created during VM migration automatically have:
+- Ownership: `107:107`
+- Permissions: `0777`
+
+## 🔧 Implemented Workaround (Safe for SNO/HPP)
+We use a persistent `systemd` service that watches the HPP volume path and automatically fixes ownership and permissions.
+
+### 📁 Script: `/usr/local/bin/fix-pvc-permissions.sh`
+
+```bash
+#!/bin/bash
+
+PVC_DIR="/var/hpvolumes/csi"
+TARGET_UID=107
+TARGET_PERM=777
+SLEEP_INTERVAL=15
+
+echo "[INFO] Watching $PVC_DIR for new PVCs..."
+
+while true; do
+  for path in "$PVC_DIR"/pvc-*; do
+    [ -d "$path" ] || continue
+
+    owner_uid=$(stat -c "%u" "$path")
+    perms=$(stat -c "%a" "$path")
+
+    if [[ "$owner_uid" -ne "$TARGET_UID" || "$perms" -ne $TARGET_PERM ]]; then
+      echo "[FIX] Updating permissions for $path"
+      chown -R "$TARGET_UID:$TARGET_UID" "$path"
+      chmod -R "$TARGET_PERM" "$path"
+    fi
+  done
+
+  sleep "$SLEEP_INTERVAL"
+done
+```
+
+Make the script executable:
+
+```bash
+chmod +x /usr/local/bin/fix-pvc-permissions.sh
+```
+
+### ⚙️ Systemd Service: `/etc/systemd/system/fix-pvc-permissions.service`
+
+```ini
+[Unit]
+Description=Fix PVC permissions for HPP RWX
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/local/bin/fix-pvc-permissions.sh
+Restart=always
+RestartSec=10
+User=root
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start the service:
+
+```bash
+systemctl daemon-reexec
+systemctl daemon-reload
+systemctl enable --now fix-pvc-permissions.service
+systemctl status fix-pvc-permissions.service
+```
+
+This ensures any newly created PVC folder under `/var/hpvolumes/csi/` will automatically be fixed.
+
+## ⚠️ Why RWX Using HPP is Not Suitable for Multi-node Clusters
+
+| Limitation | Description |
+|------------|-------------|
+| Node-local only | HPP volumes are stored on local disk, not shared across nodes. |
+| RWX only works in SNO | In multi-node setups, only one node has access to the path, so RWX fails. |
+| Breaks multi-node apps | Applications expecting shared volumes across nodes will fail. |
+| No built-in fsGroup control | CDI does not support setting fsGroup globally. |
+
+## ✅ Recommended Alternatives for Production
+
+| Solution | Notes |
+|----------|-------|
+| OpenShift Data Foundation (ODF) | CSI-based RWX volumes using CephFS. |
+| NFS-backed RWX volumes | Simple and effective shared volumes. |
+| CephFS/GlusterFS | Robust distributed storage options. |
+
+## ✅ Conclusion
+
+This workaround is stable and effective for:
+- Single Node OpenShift (SNO)
+- Test environments using HPP
+- Controlled production setups
+
+For production at scale, use CSI RWX-compatible storage like ODF or NFS.
+
+---
