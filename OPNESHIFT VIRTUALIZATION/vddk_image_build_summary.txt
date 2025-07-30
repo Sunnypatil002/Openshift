@@ -1,0 +1,47 @@
+
+VDDK Image Build and Push – Summary
+
+✅ Objective:
+Build a VDDK container image and push it to the internal OpenShift registry (SNO setup) for use in MTV (Migration Toolkit for Virtualization).
+
+✅ Successful Steps
+
+1. Extracted VDDK tarball:
+   - Unzipped the provided `vddk` tar file on the bastion/SNO node.
+
+2. Identified internal OpenShift registry service:
+   - Verified using:
+     oc get service image-registry -n openshift-image-registry
+     - Result: ClusterIP on port 5000.
+
+3. Logged in to internal registry from SNO node:
+   podman login --tls-verify=false -u kubeadmin -p $(oc whoami -t) image-registry.openshift-image-registry.svc:5000
+   - Success message: Login Succeeded!
+
+4. Built the VDDK image using podman:
+   podman build -t image-registry.openshift-image-registry.svc:5000/mtv/vddk:latest .
+
+5. Pushed the image to OpenShift internal registry:
+   podman push --tls-verify=false image-registry.openshift-image-registry.svc:5000/mtv/vddk:latest
+
+6. Configured the image path in MTV GUI:
+   - Used:
+     image-registry.openshift-image-registry.svc:5000/mtv/vddk:latest
+
+⚠️ Issues Faced
+
+1. DNS Resolution Failure from Bastion:
+   - Error: no such host
+   - Cause: Bastion node could not resolve internal service DNS (not part of cluster network).
+   - Fix: Switched to running all steps directly on the SNO node.
+
+2. Missing token for oc whoami -t:
+   - On SNO node, no valid kubeconfig was present under core user.
+   - Fix: Used manual token login or ensured kubeconfig availability.
+
+3. Hanging podman login from Bastion:
+   - Reason: Could not reach the registry service from outside the cluster.
+   - Fix: Ran podman login from within the SNO node.
+
+✅ Final VDDK Image Path Used:
+image-registry.openshift-image-registry.svc:5000/mtv/vddk:latest
